@@ -46,14 +46,25 @@ class MenuOrder(object):
     def __init__(self, parse_order):
         self.parse_order = parse_order
 
+    # returns one of : 'IN_QUEUE', 'CANCELLED', 'PROCESSING', 'DONE', 'PICKED'
+    def update(self):
+        self.parse_order = Order.Query.get(objectId=self.parse_order.objectId)
+
+    def get_status(self):
+        self.update()
+        return self.parse_order.status
+
     def cancel(self):
-        self.parse_order.status = "CANCELLED"
+        self.parse_order.status = u'CANCELLED'
         self.parse_order.save()
 
-    def wait_status(self, status, wait_time=10**3):
+    def in_queue(self):
+        orders = Order.Query.filter(objectId=self.parse_order.objectId)
+        return len(orders) == 1
+
+    def wait_status(self, status, wait_time=10 ** 2):
         passed_time = 0
-        while self.parse_order.status != status and passed_time < wait_time:
-            self.parse_order = Order.Query.get(objectId = self.parse_order.objectId)
+        while self.get_status() != status and passed_time < wait_time:
             time.sleep(1)
             wait_time += 1
         return self.parse_order.status == status
@@ -77,7 +88,7 @@ class Menu(object):
         product = Product.Query.get(objectId=item.parse_id)
 
         order = Order()
-        order.status = "IN_PROCESS"
+        order.status = u'IN_QUEUE'
         order.save()
         order.relation('product').add(product)
         order.relation('user').add(user)
@@ -89,13 +100,23 @@ def init_parse():
     register(config.application_key, config.rest_api_key, master_key=config.master_key)
 
 
+def place_bunch_orders():
+    init_parse()
+    menu = Menu()
+    for i in range(10):
+        order = menu.place_order('Danchik', 1)
+
 def test():
     init_parse()
     menu = Menu()
     print(menu.text())
     order = menu.place_order('Danchik', 1)
     print(order)
+    while order.in_queue():
+        print('Processing')
+    print('DONE!')
 
 
 if __name__ == "__main__":
+    place_bunch_orders()
     test()

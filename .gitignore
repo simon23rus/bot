@@ -2,4 +2,5 @@
 .idea/
 config
 parse_config.py
+*.pyc
 

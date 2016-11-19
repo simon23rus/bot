@@ -3,6 +3,12 @@ import logging
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 
+def run_graph(bot, update):
+    msg = 'start_choosing'
+    graph = Graph('init', bot, update)
+    while True:
+        msg = graph.go(msg)
+
 def bot_init(bot, update):
     create_user(update.message.from_user.id)
     bot.sendMessage(update.message.from_user.id, 'Дратути')

@@ -11,60 +11,40 @@ def start(bot, update):
     #create_user(update.message.from_user.id)
     # run_graph(bot, update)
     print("ZDAROVA, BRATAN")
+
     bot_choose(bot, update)
 
-    MessageHandler(Filters.text,bot_make_order,pass_user_data=True)
-    # bot_make_order(bot, update)
 
-    # graph.go('start choosing')
+    bot_make_order(bot, update)
+   
 
 def bot_choose(bot, update):
-    keyboard = [[KeyboardButton('Шаурма'), KeyboardButton('Other Staff')]]
+    keyboard = [[InlineKeyboardButton('Шаурма', callback_data='1'), InlineKeyboardButton('Other Staff', callback_data='2')]]
 
-    reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
-    print(update.message.from_user.id)
+    reply_markup = InlineKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
     bot.sendMessage(chat_id = update.message.chat_id, text='Что Вы хотите заказать', reply_markup=reply_markup)
 
 
-def bot_make_order(bot, update):
-    keyboard = [[KeyboardButton('Да'), KeyboardButton('Нет')]]
 
-    reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
+def bot_make_order(bot, update):
+    keyboard = [[InlineKeyboardButton('Да', callback_data='10'), InlineKeyboardButton('Нет',callback_data='11')]]
+
+    reply_markup = InlineKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
 
     bot.sendMessage(chat_id = update.message.chat_id, text='Готовы ли Вы подтвердить Ваш заказ?', reply_markup=reply_markup)
 
 def menu(bot, update):
     bot.sendMessage(chat_id=update.message.chat_id, text="I'm a bot, please talk to me!")
 
-
-def choose(bot, update):
-    keyboard = [[KeyboardButton('Шаурма'), KeyboardButton('Other Staff')]]
-
-    reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=False)
-
-    update.message.reply_text('Please choose product:', reply_markup=reply_markup)
-
-    # graph.go('verify order')
-
-def confirm(bot, update):
-    keyboard = [[KeyboardButton('Да'), KeyboardButton('Нет')]]
-
-    reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=False)
-
-    update.message.reply_text('Вы готовы подтвердить заказ:', reply_markup=reply_markup)
-
-
 def button(bot, update):
     query = update.callback_query
     print(query.data)
     if query.data == '1':
-        new_keyboard = [[InlineKeyboardButton("novaya", callback_data='1'),
-                     InlineKeyboardButton("Option 2", callback_data='2')],
-
-                    [InlineKeyboardButton("Option 3", callback_data='3')]]
+        new_keyboard = [[InlineKeyboardButton("Да", callback_data='1'),
+                     InlineKeyboardButton("Нет", callback_data='2')]]
         new_reply_markup = InlineKeyboardMarkup(new_keyboard, one_time_keyboard=True, resize_keyboard=True)
        
-        bot.editMessageText(text='Please pliz',
+        bot.editMessageText(text='Готовы подтвердить заказ?',
                 chat_id=query.message.chat_id,
                 message_id=query.message.message_id)
 

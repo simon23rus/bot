@@ -60,7 +60,7 @@ class Graph:
     def go(self, msg):
         self.cur_node = self.cur_node.go(msg)
         next_msg = self.cur_node.feedback(self, self.bot, self.update)
-        return self.cur_node.name, next_msg
+        return next_msg
 
 
 

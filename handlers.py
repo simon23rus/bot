@@ -14,7 +14,7 @@ def start(bot, update):
 
     bot_choose(bot, update)
 
-
+    print(update)
     bot_make_order(bot, update)
    
 

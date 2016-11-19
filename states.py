@@ -28,15 +28,15 @@ class Graph:
 	self.add_edge(choose, make_order, 'verify order')
 	self.add_edge(make_order, start_cook, 'start cook')
 	self.add_edge(start_cook, end_cook, 'end cook')
-	self.add_edge(end_cook, init, 'end order')
-	self.add_edge(alarm1, init, 'end order')
-	self.add_edge(alarm2, init, 'end order')
+	self.add_edge(end_cook, choose, 'end order')
+	self.add_edge(alarm1, choose, 'end order')
+	self.add_edge(alarm2, choose, 'end order')
 	self.add_edge(end_cook, alarm1, 'save order')
      	self.add_edge(alarm1, alarm2, 'save order')
         self.add_edge(alarm2, blacklist, 'lost order')
 	self.add_edge(blacklist, banned, 'ban')
-	self.add_edge(blacklist, init, 'decrease loyalty')
-     	self.add_edge(banned, init, 'increase loyalty')
+	self.add_edge(blacklist, choose, 'decrease loyalty')
+     	self.add_edge(banned, choose, 'increase loyalty')
 	
         self.cur_node = self.nodes[cur_node_name]
 

@@ -21,7 +21,7 @@ def main():
 
 	message = input('Print your mess: ')
 
-	bot.sendMessage(get_user_id(updates[0]), message)
+	bot.sendMessage(get_user_id(updates[-1]), message)
 	
 
 

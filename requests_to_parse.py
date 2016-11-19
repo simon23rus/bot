@@ -13,3 +13,4 @@ def wait_end_order(id, wait_time, order):
     #     passed_time += 1
     # return order.in_queue
     time.sleep(1)
+    return True

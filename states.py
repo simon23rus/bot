@@ -14,9 +14,10 @@ class Node:
         return self.map.get(message, self.map.get(''))
 
 class Graph:
-    def __init__(self, cur_node_name, bot, update, alarm_time = [5,10]):
+    def __init__(self, cur_node_name, bot, update, menu, alarm_time = [5,10,15]):
         self.nodes = {}
         self.bot = bot
+        self.menu = menu
         self.update = update
 
         init = self.add_node('init', bot_init)
@@ -27,7 +28,7 @@ class Graph:
         end_cook = self.add_node('end_cook', bot_end_cook)
         alarm1 = self.add_node('alarm1', bot_alarm(alarm_time[0]))
         alarm2 = self.add_node('alarm2', bot_alarm(alarm_time[1]))
-        blacklist = self.add_node('blacklist', bot_blacklist)
+        blacklist = self.add_node('blacklist', bot_blacklist(alarm_time[2]))
         banned = self.add_node('banned', bot_banned)
         end_order = self.add_node('end_order', bot_end_order)
 
@@ -57,10 +58,14 @@ class Graph:
     def add_edge(self, src, dst, message):
         src.add_adj(message, dst)
 
-    def go(self, msg):
+    def go(self):
+        msg = self.cur_node.feedback(self, self.bot, self.update, self.menu)
         self.cur_node = self.cur_node.go(msg)
-        next_msg = self.cur_node.feedback(self, self.bot, self.update)
-        return next_msg
 
-
+def run_graph(bot, update):
+    init_parse()
+    menu = Menu()
+    graph = Graph('init', bot, update,menu)
+    while True:
+        graph.go()
 

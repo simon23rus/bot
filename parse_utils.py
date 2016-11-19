@@ -58,7 +58,6 @@ class MenuOrder(object):
             wait_time += 1
         return self.parse_order.status == status
 
-
 class Menu(object):
     def __init__(self):
         products = Product.Query.all()

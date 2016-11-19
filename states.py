@@ -14,7 +14,7 @@ class Node:
         return self.map.get(message, self.map.get(''))
 
 class Graph:
-    def __init__(self, cur_node_name, bot, update, alarm_time = [5,10,15]):
+    def __init__(self, cur_node_name, bot, update, menu, alarm_time = [5,10,15]):
         self.nodes = {}
         self.bot = bot
         self.menu = menu

@@ -1,8 +1,20 @@
 import telegram
-from telegram.ext import Updater
+import logging
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 
-def start(bot, update):
-    bot.sendMessage(chat_id=update.message.chat_id, text="I'm a bot, please talk to me!")
+
+import handlers
+
+# def start(bot, update):
+#     bot.sendMessage(chat_id=update.message.chat_id, text="I'm a bot, please talk to me!")
+
+
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
+
+
+
 
 
 def get_user_id(update):
@@ -17,13 +29,35 @@ def main():
 	bot = telegram.Bot(token=token)
 	updater = Updater(token=token)
 
-	updates = bot.getUpdates()
 
-	message = input('Print your mess: ')
 
-	bot.sendMessage(get_user_id(updates[-1]), message)
+	# Create the Updater and pass it your bot's token.
+
+	updater.dispatcher.add_handler(CommandHandler('start', start))
+	updater.dispatcher.add_handler(CallbackQueryHandler(button))
+	updater.dispatcher.add_handler(CommandHandler('help', help))
+	updater.dispatcher.add_error_handler(error)
+
+	# Start the Bot
+	updater.start_polling()
+
+	# Run the bot until the user presses Ctrl-C or the process receives SIGINT,
+	# SIGTERM or SIGABRT
+	updater.idle()
+
+
+
+
+
+
+	# updates = bot.getUpdates()
+
+	# message = input('Print your mess: ')
+
+	# bot.sendMessage(get_user_id(updates[-1]), message)
 	
 
+# /command [optional] [argument]
 
 
 

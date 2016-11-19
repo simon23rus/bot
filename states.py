@@ -14,11 +14,12 @@ class Node:
         return self.map.get(message, self.map.get(''))
 
 class Graph:
-    def __init__(self, cur_node_name, bot, update, menu, alarm_time = [5,10,15]):
+    def __init__(self, cur_node_name, bot, update, alarm_time = [5,10,15]):
         self.nodes = {}
         self.bot = bot
         self.menu = menu
         self.update = update
+        self.order = None
 
         init = self.add_node('init', bot_init)
         choose = self.add_node('choose', bot_choose)
@@ -59,13 +60,13 @@ class Graph:
         src.add_adj(message, dst)
 
     def go(self):
-        msg = self.cur_node.feedback(self, self.bot, self.update, self.menu)
+        msg = self.cur_node.feedback(self, self.bot, self.update, self.menu, self.order)
         self.cur_node = self.cur_node.go(msg)
 
 def run_graph(bot, update):
     init_parse()
     menu = Menu()
-    graph = Graph('init', bot, update,menu)
+    graph = Graph('init', bot, update)
     while True:
         graph.go()
 

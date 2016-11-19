@@ -15,29 +15,29 @@ class Graph:
         self.nodes = {}
 
         init = self.add_node('init')
-	choose = self.add_node('choose')
-	make_order = self.add_node('make_order')
-	start_cook = self.add_node('start_cook')
-	end_cook = self.add_node('end_cook')
-	alarm1 = self.add_node('alarm1')
-	alarm2 = self.add_node('alarm2')
-	blacklist = self.add_node('blacklist')
-	banned = self.add_node('banned')
-	
-	self.add_edge(init, choose, 'start choosing')
-	self.add_edge(choose, make_order, 'verify order')
-	self.add_edge(make_order, start_cook, 'start cook')
-	self.add_edge(start_cook, end_cook, 'end cook')
-	self.add_edge(end_cook, choose, 'end order')
-	self.add_edge(alarm1, choose, 'end order')
-	self.add_edge(alarm2, choose, 'end order')
-	self.add_edge(end_cook, alarm1, 'save order')
-     	self.add_edge(alarm1, alarm2, 'save order')
+        choose = self.add_node('choose')
+        make_order = self.add_node('make_order')
+        start_cook = self.add_node('start_cook')
+        end_cook = self.add_node('end_cook')
+        alarm1 = self.add_node('alarm1')
+        alarm2 = self.add_node('alarm2')
+        blacklist = self.add_node('blacklist')
+        banned = self.add_node('banned')
+
+        self.add_edge(init, choose, 'start choosing')
+        self.add_edge(choose, make_order, 'verify order')
+        self.add_edge(make_order, start_cook, 'start cook')
+        self.add_edge(start_cook, end_cook, 'end cook')
+        self.add_edge(end_cook, choose, 'end order')
+        self.add_edge(alarm1, choose, 'end order')
+        self.add_edge(alarm2, choose, 'end order')
+        self.add_edge(end_cook, alarm1, 'save order')
+        self.add_edge(alarm1, alarm2, 'save order')
         self.add_edge(alarm2, blacklist, 'lost order')
-	self.add_edge(blacklist, banned, 'ban')
-	self.add_edge(blacklist, choose, 'decrease loyalty')
-     	self.add_edge(banned, choose, 'increase loyalty')
-	
+        self.add_edge(blacklist, banned, 'ban')
+        self.add_edge(blacklist, choose, 'decrease loyalty')
+        self.add_edge(banned, choose, 'increase loyalty')
+
         self.cur_node = self.nodes[cur_node_name]
 
     def add_node(self, name):

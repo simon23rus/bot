@@ -1,10 +1,6 @@
-import telegram
-import logging
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 
 
-import handlers
+from handlers import *
 
 # def start(bot, update):
 #     bot.sendMessage(chat_id=update.message.chat_id, text="I'm a bot, please talk to me!")
@@ -36,6 +32,8 @@ def main():
 	updater.dispatcher.add_handler(CommandHandler('start', start))
 	updater.dispatcher.add_handler(CallbackQueryHandler(button))
 	updater.dispatcher.add_handler(CommandHandler('help', help))
+	updater.dispatcher.add_handler(CommandHandler('choose', choose))
+	updater.dispatcher.add_handler(CommandHandler('menu', menu))
 	updater.dispatcher.add_error_handler(error)
 
 	# Start the Bot

@@ -83,6 +83,12 @@ class Menu(object):
             menu_string += item.to_unicode() + u'\n'
         return menu_string
 
+    def get_item_names(self):
+        item_names = []
+        for item in self.items:
+            item_names.append(item.name)
+        return item_names
+
     def place_order(self, telegram_id, menu_id):
         item = next(item for item in self.items if item.menu_id == menu_id)
         user = User.Query.get(telegramId=telegram_id)
@@ -107,6 +113,7 @@ def place_bunch_orders():
     for i in range(10):
         order = menu.place_order('Danchik', 1)
 
+
 def test():
     init_parse()
     menu = Menu()
@@ -119,5 +126,5 @@ def test():
 
 
 if __name__ == "__main__":
-    place_bunch_orders()
+    # place_bunch_orders()
     test()

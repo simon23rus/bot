@@ -101,6 +101,12 @@ def init_parse():
     register(config.application_key, config.rest_api_key, master_key=config.master_key)
 
 
+def place_bunch_orders():
+    init_parse()
+    menu = Menu()
+    for i in range(10):
+        order = menu.place_order('Danchik', 1)
+
 def test():
     init_parse()
     menu = Menu()
@@ -113,4 +119,5 @@ def test():
 
 
 if __name__ == "__main__":
+    place_bunch_orders()
     test()

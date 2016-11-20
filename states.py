@@ -99,7 +99,7 @@ class Graph:
         keys = [[messages.yes], [messages.no]]
         orders_number = parse_utils.get_number_of_orders()
         suffix = u''
-        if (orders_number != 0) {
+        if (orders_number != 0):
             suffix = messages.orders_number.format(orders_number)
         else:
             suffix = messages.no_orders_before

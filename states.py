@@ -1,6 +1,4 @@
-from handlers import *
 from parse_utils import *
-from process_orders import *
 
 import telegram
 import logging
@@ -31,46 +29,55 @@ class MenuData:
 class Graph:
     def __init__(self, bot, userId, alarm_time = [5,10,15]):
         init_parse()
+
         menu = Menu()
         self.nodes = {}
         self.bot = bot
         self.menu_data = MenuData(menu)
         self.userId = userId
-        self.cur_node = self.nodes['init']
 
         init = self.add_node('init', self.bot_init)
         choose = self.add_node('choose', self.bot_choose)
         make_order = self.add_node('make_order', self.bot_make_order)
         inqueue = self.add_node('inqueue', self.bot_inqueue)
+
         start_cook = self.add_node('start_cook', self.bot_start_cook)
         end_cook = self.add_node('end_cook', self.bot_end_cook)
-        alarm1 = self.add_node('alarm1', self.bot_alarm(alarm_time[0]))
-        alarm2 = self.add_node('alarm2', self.bot_alarm(alarm_time[1]))
-        blacklist = self.add_node('blacklist', self.bot_blacklist(alarm_time[2]))
+        # alarm1 = self.add_node('alarm1', self.bot_alarm(alarm_time[0]))
+        # alarm2 = self.add_node('alarm2', self.bot_alarm(alarm_time[1]))
+        # blacklist = self.add_node('blacklist', self.bot_blacklist(alarm_time[2]))
         banned = self.add_node('banned', self.bot_banned)
         end_order = self.add_node('end_order', self.bot_end_order)
+        self.cur_node = self.nodes['init']
+
 
         self.add_edge(init, choose, 'start choosing')
+        print('Tut1')
         self.add_edge(choose, make_order, 'verify order')
         self.add_edge(make_order, choose, 'return')
         self.add_edge(make_order, inqueue, 'wait inqueue')
         self.add_edge(inqueue, start_cook, 'start cook')
         self.add_edge(start_cook, end_cook, 'end cook')
-        self.add_edge(end_cook, alarm1, 'save order')
-        self.add_edge(alarm1, end_order, 'end order')
-        self.add_edge(alarm2, end_order, 'end order')
-        self.add_edge(end_cook, alarm1, 'wait getting')
-        self.add_edge(alarm1, alarm2, 'save order')
-        self.add_edge(alarm2, blacklist, 'save order')
-        self.add_edge(blacklist, banned, 'ban')
-        self.add_edge(blacklist, choose, 'lost order')
-        self.add_edge(banned, choose, 'unbanned')
-        self.add_edge(end_order, choose, 'return')
+        print('Tut2')
 
-        return self
+        # self.add_edge(end_cook, alarm1, 'save order')
+        # self.add_edge(alarm1, end_order, 'end order')
+        # self.add_edge(alarm2, end_order, 'end order')
+        # self.add_edge(end_cook, alarm1, 'wait getting')
+        # self.add_edge(alarm1, alarm2, 'save order')
+        print('Tut3')
+        # self.add_edge(alarm2, blacklist, 'save order')
+        # self.add_edge(blacklist, banned, 'ban')
+        # self.add_edge(blacklist, choose, 'lost order')
+        # self.add_edge(banned, choose, 'unbanned')
+        print('Tut4')
 
-    def add_node(self, name):
-        node = Node(name)
+        # self.add_edge(end_order, choose, 'return')
+
+        # return self
+
+    def add_node(self, name, fun):
+        node = Node(name, fun)
         self.nodes[name] = node
         return node
 
@@ -78,6 +85,7 @@ class Graph:
         src.add_adj(message, dst)
 
     def bot_init(text):
+        print('initbota')
         create_user(self.userId)
         bot.sendMessage(self.userId, 'Дратути')
         message = 'Выберите продукт:'
@@ -138,7 +146,9 @@ class Graph:
         return 'unbanned', None, None
 
     def go(self,text):
-        next,message,keys = self.cur_node.feedback(self, text)
+        print('dsds = ', self.nodes['init'] == self.cur_node)
+        next,message,keys = self.cur_node.feedback(text)
+        print('123')
         self.cur_node = self.cur_node.go(next)
         return message, keys
 

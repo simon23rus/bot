@@ -2,8 +2,13 @@ from telegram import ReplyKeyboardMarkup
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
                           ConversationHandler)
 
+import telegram_config
+
+print(telegram_config.bot_token)
+
 import logging
 
+from states import *
 
 WORKING = 1
 
@@ -19,9 +24,9 @@ def facts_to_str(user_data):
 
 
 def start(bot, update, user_data):
+    print('abcd')
     user_data['graph'] = Graph(bot, update.message.from_user.id)
     update.message.text = 'start'
-
     return work(bot, update, user_data)
 
 
@@ -40,7 +45,9 @@ def createKeyboard(keys):
 def work(bot, update, user_data):
     text = update.message.text
     while True:
+        print('while1')
         message, keys = user_data['graph'].go(text)
+        print('while2')
         if len(keys) == 0:
             update.message.reply_text(message)
             text = ''
@@ -58,32 +65,21 @@ def error(bot, update, error):
 
 
 def done(bot, update, user_data):
-  print('zazaz')
-  return ConversationHandler.END
-
-def create_arguments_for_regex(keys):
-    ans = []
-    for key in keys:   
-        ans.append('^' + key + '$')
-
-
+    print('zazaz')
+    return ConversationHandler.END
 
     return '|'.join(ans)
 def main():
     # Create the Updater and pass it your bot's token.
-    config = open('config', 'r+')
-    token = config.readline().split('=')[1][:-1]
-    config.close()
-    updater = Updater(token=token)
+    updater = Updater(token=telegram_config.bot_token)
+
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
-    arguments = create_arguments_for_regex(keys)
-    print(arguments)
     # Add conversation handler with the states GENDER, PHOTO, LOCATION and BIO
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start)],
+        entry_points=[CommandHandler('start', start, pass_user_data=True)],
 
         states={
             WORKING: [RegexHandler('(?!Done)', work, pass_user_data=True)]

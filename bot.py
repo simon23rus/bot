@@ -17,6 +17,7 @@ def get_user_id(update):
 	return  update.message.from_user.id
 
 
+
 def main():
 
 	config = open('config', 'r+')

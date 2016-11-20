@@ -18,15 +18,15 @@ class Node:
 
 
 class Graph:
-    def __init__(self, telegram_id, alarm_time=[5, 10, 15]):
-        parse_utils.init_parse()
-        parse_utils.create_user(self.telegram_id)
-
+    def __init__(self, telegram_id):
         self.menu = None
         self.last_item_name = None
         self.order = None
         self.nodes = {}
         self.telegram_id = telegram_id
+        
+        parse_utils.init_parse()
+        parse_utils.create_user(self.telegram_id)
 
         self.add_node(u'show_menu', self.show_menu)
         self.add_node(u'confirm_order', self.confirm_order)
@@ -44,22 +44,8 @@ class Graph:
         self.add_transition(u'pick_order', u'show_menu', '')
         self.add_transition(u'something_wrong', u'show_menu', '')
 
-        # self.add_node('init', self.bot_init)
-        # self.add_node('choose', self.bot_choose)
-        # self.add_node('make_order', self.bot_make_order)
-        # self.add_node('inqueue', self.bot_inqueue)
-        # self.add_node('start_cook', self.bot_start_cook)
-        # self.add_node('end_cook', self.bot_end_cook)
-        # self.add_edge('init', 'choose', 'start choosing')
-        # self.add_edge('choose', 'make_order', 'verify order')
-        # self.add_edge('make_order', 'choose', 'return')
-        # self.add_edge('make_order', 'inqueue', 'wait inqueue')
-        # self.add_edge('inqueue', 'start_cook', 'start cook')
-        # self.add_edge('start_cook', 'end_cook', 'end cook')
-
         self.cur_node = self.nodes[u'show_menu']
 
-        # self.add_edge(end_order, choose, 'return')
 
     def reset_vars(self):
         self.menu = None
@@ -84,13 +70,14 @@ class Graph:
     #
     def show_menu(self, text):
         self.menu = parse_utils.Menu()
-        return u'', messages.choose_item, self.menu.get_item_names()
+        menu_items = [[item] for item in self.menu.get_item_names()]
+        return u'', messages.choose_item, menu_items
 
     def confirm_order(self, text):
         if not text in self.menu.get_item_names():
             return u'unrecognized', u'', []
         self.last_item_name = text
-        keys = [messages.yes, messages.no]
+        keys = [[messages.yes], [messages.no]]
         return u'', messages.confirm_question.format(text), keys
 
     def wait_in_queue(self, text):

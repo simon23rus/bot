@@ -7,8 +7,6 @@ import logging
 
 WORKING = 1
 
-markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
-
 
 
 def facts_to_str(user_data):

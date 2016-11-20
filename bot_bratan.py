@@ -56,7 +56,7 @@ def callback(bot, job):
       markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True)
       update.message.reply_text(message,
                       reply_markup=markup)
-    break
+      break
   print(u'-end_while()')
 
 def work(bot, update, job_queue, user_data):

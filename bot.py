@@ -56,11 +56,10 @@ def callback(bot, job):
       markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True)
       update.message.reply_text(message,
                       reply_markup=markup)
-    break
+      break
   print(u'-end_while()')
 
 def work(bot, update, job_queue, user_data):
-    text = update.message.text
 
     print('b4 Job')
     print (job_queue)
@@ -70,9 +69,8 @@ def work(bot, update, job_queue, user_data):
     # print(jobba)
 
     jobb = Job(callback,0.1,repeat=False, context=[update,user_data])
-    print('JOBS?')
     job_queue.put(jobb)
-    print('put?')
+   
 
     # while True:
     #     print(u'-0')

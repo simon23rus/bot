@@ -30,6 +30,10 @@ def create_user(telegram_id):
         user.telegramId = telegram_id
         user.save()
 
+def get_number_of_orders():
+    orders = Order().Query.all()
+    return len(orders)
+
 class MenuItem(object):
     def __init__(self, menu_id, product):
         self.menu_id = menu_id

@@ -94,7 +94,13 @@ class Graph:
             return u'unrecognized', u'', []
         self.last_item_name = text
         keys = [[messages.yes], [messages.no]]
-        return u'', messages.confirm_question.format(text), keys
+        orders_number = parse_utils.get_number_of_orders()
+        suffix = u''
+        if (orders_number != 0) {
+            suffix = messages.orders_number.format(orders_number)
+        else:
+            suffix = messages.no_orders_before
+        return u'', messages.confirm_question.format(text) + suffix, keys
 
     def receive_confirmation(self, text):
         if text == messages.yes:

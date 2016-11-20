@@ -84,15 +84,18 @@ class Graph:
     #
     def show_menu(self, text):
         self.menu = parse_utils.Menu()
-        menu_items = [str(item) for item in self.menu.get_item_names()]
-        menu_prices = [str(item) for item in self.menu.get_item_prices()]
-        menu_items = [menu_items[i] + ' (' + menu_prices[i] + 'р)' for i in range(len(menu_items))]
+        menu_items = [[str(item)] for item in self.menu.get_item_names()]
+        menu_prices = [[str(item)] for item in self.menu.get_item_prices()]
+        menu_items = [[menu_items[i][0] + ' (' + menu_prices[i][0] + 'р)'] for i in range(len(menu_items))]
         return u'', messages.choose_item, menu_items
 
     def confirm_order(self, text):
-        if not text in self.menu.get_item_names():
+        menu_items = [[str(item)] for item in self.menu.get_item_names()]
+        menu_prices = [[str(item)] for item in self.menu.get_item_prices()]
+        menu_items = [[menu_items[i][0] + ' (' + menu_prices[i][0] + 'р)'] for i in range(len(menu_items))]
+        if not text in [x[0] for x in menu_items]:
             return u'unrecognized', u'', []
-        self.last_item_name = text
+        self.last_item_name = text.split('(')[0][:-1]
         keys = [[messages.yes], [messages.no]]
         orders_number = parse_utils.get_number_of_orders()
         suffix = u''

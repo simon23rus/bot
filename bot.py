@@ -6,6 +6,8 @@ from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, Rege
 
 from states import *
 
+from telegram.ext import Job
+
 WORKING = 1
 
 import telegram_config

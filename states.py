@@ -107,7 +107,7 @@ class Graph:
     def wait_in_queue(self, text):
         if self.order.in_queue():
             print("Order still in a queue")
-            time.sleep(1)
+            # time.sleep(1)
             print("returning")
             return u'in_queue', u'', []
         else:

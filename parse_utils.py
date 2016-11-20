@@ -6,7 +6,7 @@ from parse_rest.connection import register
 from parse_rest.datatypes import Object
 from parse_rest.user import User
 
-from configs import parse_config
+import parse_config
 
 
 class User(Object):
@@ -91,6 +91,10 @@ class Menu(object):
             item_names.append(item.name)
         return item_names
 
+    def place_order_by_name(self, telegram_id, menu_name):
+        item = next(item for item in self.items if item.name == menu_name)
+        return self.place_order(telegram_id, item.menu_id)
+
     def place_order(self, telegram_id, menu_id):
         item = next(item for item in self.items if item.menu_id == menu_id)
         user = User.Query.get(telegramId=telegram_id)
@@ -121,6 +125,8 @@ def test():
     menu = Menu()
     print(menu.text())
     order = menu.place_order('Danchik', 1)
+    name = menu.get_item_names()[3]
+    order_2 = menu.place_order_by_name('Migelio', name)
     print(order)
     while order.in_queue():
         print('Processing')

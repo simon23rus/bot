@@ -2,5 +2,6 @@
 .idea/
 configs/
 __pycache__/
+*config*
 *.pyc
 

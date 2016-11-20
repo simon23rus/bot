@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 
 
 import time
@@ -97,7 +96,7 @@ class Menu(object):
             item_names.append(item.name)
         return item_names
 
-    def get_item_price(self):
+    def get_item_prices(self):
         item_prices = []
         for item in self.items:
             item_prices.append(item.price)

@@ -84,9 +84,9 @@ class Graph:
     #
     def show_menu(self, text):
         self.menu = parse_utils.Menu()
-        menu_items = [str(item) for item in self.menu.get_item_names()]
-        menu_prices = [str(item) for item in self.menu.get_item_prices()]
-        menu_items = [menu_items[i] + ' (' + menu_prices[i] + 'р)' for i in range(len(menu_items))]
+        menu_items = [[str(item)] for item in self.menu.get_item_names()]
+        menu_prices = [[str(item)] for item in self.menu.get_item_prices()]
+        menu_items = [[menu_items[i][0] + ' (' + menu_prices[i][0] + 'р)'] for i in range(len(menu_items))]
         return u'', messages.choose_item, menu_items
 
     def confirm_order(self, text):

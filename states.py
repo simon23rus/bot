@@ -116,7 +116,7 @@ class Graph:
 
     def pick_order(self, text):
         if self.order.picked():
-            return u'picked', messages.bon_appetit[random.randint(0,len(bon_appetit)], []
+            return u'picked', random.choice(messages.bon_appetit), []
         else:
             return u'not_picked', '', []
 

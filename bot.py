@@ -7,7 +7,7 @@ from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, Rege
 from states import *
 
 from telegram.ext import Job
-
+from telegram.ext.dispatcher import run_async
 WORKING = 1
 
 import telegram_config
@@ -16,7 +16,7 @@ j = None
 
 def pyat(bot, update):
     return 5
-
+    
 
 def start(bot, update, job_queue, user_data):
     user_data[u'graph'] = Graph(update.message.from_user.id)
@@ -34,6 +34,7 @@ def create_keyboard(keys):
     #     keyboard.append([keys[-1]])
     # return keyboard
 
+@run_async
 def callback(bot, job):
   update = job.context[0]
   user_data = job.context[1]
@@ -60,6 +61,7 @@ def callback(bot, job):
   print(u'-end_while()')
 
 def work(bot, update, job_queue, user_data):
+    text = update.message.text
 
     print('b4 Job')
     print (job_queue)
@@ -69,8 +71,9 @@ def work(bot, update, job_queue, user_data):
     # print(jobba)
 
     jobb = Job(callback,0.1,repeat=False, context=[update,user_data])
+    print('JOBS?')
     job_queue.put(jobb)
-   
+    print('put?')
 
     # while True:
     #     print(u'-0')
@@ -121,7 +124,7 @@ def main():
     )
     dp.add_handler(conv_handler)
     dp.add_error_handler(error)
-
+    # dp.add_handler(CommandHandler('menu', menu))
     updater.start_polling()
 
 

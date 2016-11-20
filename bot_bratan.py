@@ -7,7 +7,7 @@ from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, Rege
 from states import *
 
 from telegram.ext import Job
-
+from telegram.ext.dispatcher import run_async
 WORKING = 1
 
 import telegram_config
@@ -34,6 +34,7 @@ def create_keyboard(keys):
     #     keyboard.append([keys[-1]])
     # return keyboard
 
+@run_async
 def callback(bot, job):
   update = job.context[0]
   user_data = job.context[1]

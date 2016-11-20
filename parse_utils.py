@@ -97,6 +97,12 @@ class Menu(object):
             item_names.append(item.name)
         return item_names
 
+    def get_item_price(self):
+        item_prices = []
+        for item in self.items:
+            item_prices.append(item.price)
+        return item_prices
+
     def place_order_by_name(self, telegram_id, menu_name):
         item = next(item for item in self.items if item.name == menu_name)
         return self.place_order(telegram_id, item.menu_id)

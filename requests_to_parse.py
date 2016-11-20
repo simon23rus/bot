@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import time
 
 def wait_start_cook(id, order):

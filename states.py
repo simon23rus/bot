@@ -1,155 +1,110 @@
-from parse_utils import *
+# -*- coding: utf-8 -*-
 
-import telegram
-import logging
+import parse_utils
+import messages
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
-
-from requests_to_parse import *
 
 class Node:
-    def __init__(self, name, feedback):
+    def __init__(self, name, body_function):
         self.map = {}
         self.name = name
-        self.feedback = feedback
+        self.body_function = body_function
 
-    def add_adj(self, message, node):
+    def add_transition(self, message, node):
         self.map[message] = node
 
     def go(self, message):
-        return self.map.get(message, self.map.get(''))
+        return self.map.get(message, self.map[u'unrecognized'])
 
-class MenuData:
-    def __init__(self, menu):
-        self.menu = menu
-        self.order = None
-        self.item = None
 
 class Graph:
-    def __init__(self, bot, userId, alarm_time = [5,10,15]):
-        init_parse()
+    def __init__(self, telegram_id, alarm_time=[5, 10, 15]):
+        parse_utils.init_parse()
+        parse_utils.create_user(self.telegram_id)
 
-        menu = Menu()
+        self.menu = None
+        self.last_item_name = None
+        self.order = None
         self.nodes = {}
-        self.bot = bot
-        self.menu_data = MenuData(menu)
-        self.userId = userId
+        self.telegram_id = telegram_id
 
-        init = self.add_node('init', self.bot_init)
-        choose = self.add_node('choose', self.bot_choose)
-        make_order = self.add_node('make_order', self.bot_make_order)
-        inqueue = self.add_node('inqueue', self.bot_inqueue)
+        self.add_node(u'show_menu', self.show_menu)
+        self.add_node(u'confirm_order', self.confirm_order)
+        self.add_node(u'wait_in_queue', self.wait_in_queue)
+        self.add_node(u'pick_order', self.pick_order)
+        self.add_node(u'something_wrong', self.something_wrong)
 
-        start_cook = self.add_node('start_cook', self.bot_start_cook)
-        end_cook = self.add_node('end_cook', self.bot_end_cook)
-        # alarm1 = self.add_node('alarm1', self.bot_alarm(alarm_time[0]))
-        # alarm2 = self.add_node('alarm2', self.bot_alarm(alarm_time[1]))
-        # blacklist = self.add_node('blacklist', self.bot_blacklist(alarm_time[2]))
-        banned = self.add_node('banned', self.bot_banned)
-        end_order = self.add_node('end_order', self.bot_end_order)
-        self.cur_node = self.nodes['init']
+        for _, node in self.nodes.items():
+            node.add_transition(u'unrecognized', self.nodes[u'something_wrong'])
+            node.add_transition(u'start_over', self.nodes[u'show_menu'])
 
+        self.add_transition(u'show_menu', u'confirm_order', '')
+        self.add_transition(u'confirm_order', u'wait_in_queue', '')
+        self.add_transition(u'wait_in_queue', u'pick_order', '')
+        self.add_transition(u'pick_order', u'show_menu', '')
+        self.add_transition(u'something_wrong', u'show_menu', '')
 
-        self.add_edge(init, choose, 'start choosing')
-        print('Tut1')
-        self.add_edge(choose, make_order, 'verify order')
-        self.add_edge(make_order, choose, 'return')
-        self.add_edge(make_order, inqueue, 'wait inqueue')
-        self.add_edge(inqueue, start_cook, 'start cook')
-        self.add_edge(start_cook, end_cook, 'end cook')
-        print('Tut2')
+        # self.add_node('init', self.bot_init)
+        # self.add_node('choose', self.bot_choose)
+        # self.add_node('make_order', self.bot_make_order)
+        # self.add_node('inqueue', self.bot_inqueue)
+        # self.add_node('start_cook', self.bot_start_cook)
+        # self.add_node('end_cook', self.bot_end_cook)
+        # self.add_edge('init', 'choose', 'start choosing')
+        # self.add_edge('choose', 'make_order', 'verify order')
+        # self.add_edge('make_order', 'choose', 'return')
+        # self.add_edge('make_order', 'inqueue', 'wait inqueue')
+        # self.add_edge('inqueue', 'start_cook', 'start cook')
+        # self.add_edge('start_cook', 'end_cook', 'end cook')
 
-        # self.add_edge(end_cook, alarm1, 'save order')
-        # self.add_edge(alarm1, end_order, 'end order')
-        # self.add_edge(alarm2, end_order, 'end order')
-        # self.add_edge(end_cook, alarm1, 'wait getting')
-        # self.add_edge(alarm1, alarm2, 'save order')
-        print('Tut3')
-        # self.add_edge(alarm2, blacklist, 'save order')
-        # self.add_edge(blacklist, banned, 'ban')
-        # self.add_edge(blacklist, choose, 'lost order')
-        # self.add_edge(banned, choose, 'unbanned')
-        print('Tut4')
+        self.cur_node = self.nodes[u'show_menu']
 
         # self.add_edge(end_order, choose, 'return')
 
-        # return self
+    def reset_vars(self):
+        self.menu = None
+        self.last_item_name = None
+        self.order = None
 
     def add_node(self, name, fun):
         node = Node(name, fun)
         self.nodes[name] = node
         return node
 
-    def add_edge(self, src, dst, message):
-        src.add_adj(message, dst)
+    def add_transition(self, from_state, to_state, message):
+        self.nodes[from_state].add_transition(message, self.nodes[to_state])
 
-    def bot_init(text):
-        print('initbota')
-        create_user(self.userId)
-        bot.sendMessage(self.userId, 'Дратути')
-        message = 'Выберите продукт:'
-        keys = self.menu_data.menu.get_item_names()
-        return 'start choosing', message, keys
-
-    def bot_choose(text):
-        self.menu_data.item = text
-        message = 'Ваш заказ: ' + text + ', готовы ли Вы подтвердить?'
-        keys = ['Да', 'Нет']
-        return 'verify order', message, keys
-
-    def bot_make_order(text):
-        menu_data.order = menu.place_order_by_name(update.message.from_user.id, menu_data.item)
-        message = 'Ваш заказ принят в очередь'
-        return 'wait inqueue', message, None
-
-    def bot_inqueue(text):
-        wait_start_cook(update.message.from_user.id, menu_data.order)
-        message = 'Мы начали готовить ваш заказ.'
-        return 'start cook', message, None
-
-    def bot_start_cook(text):
-        wait_end_cook(update.message.from_user.id, menu_data.order)
-        wait_for_alarm(update.message.from_user.id)
-        message = 'Ваш заказ готов.'
-        return 'end cook', message, None
-
-    def bot_end_cook(text):
-        # wait_end_cook(update.message.from_user.id, menu_data.order)
-        wait_for_alarm(update.message.from_user.id)        
-        return 'save order', None, None
-
-    def bot_alarm(time,text):
-        def alarm(text):
-            status = wait_end_order(update.message.from_user.id, time, menu_data.order)
-            message = 'Ваш заказ был приготовлен ' + str(time) +  ' минут назад.'
-            if status == True:
-                return 'end order', message, None
-            return 'save order', message, None
-        return alarm
-
-    def bot_end_order(text):
-
-        message = 'Спасибо за ваш заказ! \n Выберите продукт:'
-        keys = self.menu_data.menu.get_item_names()
-        return 'return', message, keys
-
-    def bot_blacklist(time):
-        def blacklist():
-            status = wait_end_order(update.message.from_user.id, time, meanu_data.order)
-            if status == True:
-                return 'end order', None, None
-            return 'lost order',  'Вы не забрали ваш заказ (', None
-        return blacklist
-
-    def bot_banned(time):
-        return 'unbanned', None, None
-
-    def go(self,text):
-        print('dsds = ', self.nodes['init'] == self.cur_node)
-        next,message,keys = self.cur_node.feedback(text)
-        print('123')
-        self.cur_node = self.cur_node.go(next)
+    def go(self, text):
+        next_node_name, message, keys = self.cur_node.body_function(text)
+        self.cur_node = self.cur_node.go(next_node_name)
         return message, keys
 
+    #
+    # Body Functions which are triggered when we get to the corresponding Node
+    #
+    def show_menu(self, text):
+        self.menu = parse_utils.Menu()
+        return u'', messages.choose_item, self.menu.get_item_names()
 
+    def confirm_order(self, text):
+        if not text in self.menu.get_item_names():
+            return u'unrecognized', u'', []
+        self.last_item_name = text
+        keys = [messages.yes, messages.no]
+        return u'', messages.confirm_question.format(text), keys
+
+    def wait_in_queue(self, text):
+        if text == messages.yes:
+            self.order = self.menu.place_order_by_name(self.last_item_name)
+            return u'', messages.confirm_order, []
+        elif text == messages.no:
+            self.reset_vars()
+            return u'start_over', u'', []
+        else:
+            return u'unrecognized', u'', []
+
+    def pick_order(self, text):
+        return u'', messages.ready_to_pick, []
+
+    def something_wrong(self, text):
+        return u'start_over', messages.something_wrong, []

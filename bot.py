@@ -30,10 +30,15 @@ def create_keyboard(keys):
 def work(bot, update, user_data):
     text = update.message.text
     while True:
+        print(u'-0')
         message, keys = user_data[u'graph'].go(text)
+        print(u'-1')
         if len(keys) == 0:
-            if messages != u'':
+            print(u'-2')
+            if message:
+                print(u'-3, message = "', message, u'"')
                 update.message.reply_text(message)
+                print(u'-4')
                 # bot.sendMessage(update.message.from_user.id, message)
             text = u''
         else:
@@ -42,12 +47,13 @@ def work(bot, update, user_data):
             update.message.reply_text(message,
                                       reply_markup=markup)
             break
+    print(u'-end_while()')
 
     return WORKING
 
 
 def error(bot, update, error):
-    print(u'OOPS!')
+    print(u'OOPS: ', error)
     # logger.warn('Update "%s" caused error "%s"' % (update, error))
 
 

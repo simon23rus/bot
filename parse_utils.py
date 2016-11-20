@@ -1,6 +1,5 @@
 ﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# vim: set fileencoding=utf-8 :
 
 
 import time
@@ -25,16 +24,11 @@ class Product(Object):
 
 
 def create_user(telegram_id):
-    print("11")
-    if len(User.Query.filter(telegramId=telegram_id)) != 0:
-        print("12")
+    users = User.Query.filter(telegramId=telegram_id)
+    if len(users) == 0:
         user = User()
-        print("13")
         user.telegramId = telegram_id
-        print("14")
         user.save()
-        print("15")
-
 
 class MenuItem(object):
     def __init__(self, menu_id, product):
@@ -71,6 +65,10 @@ class MenuOrder(object):
     def in_queue(self):
         orders = Order.Query.filter(objectId=self.parse_order.objectId)
         return len(orders) == 1
+    
+    def picked(self):
+        time.sleep(2)
+        return True
 
     def wait_status(self, status, wait_time=10 ** 2):
         passed_time = 0

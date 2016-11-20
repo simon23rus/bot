@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 
@@ -67,7 +67,7 @@ class MenuOrder(object):
         return len(orders) == 1
     
     def picked(self):
-        # time.sleep(2)
+        time.sleep(2)
         return True
 
     def wait_status(self, status, wait_time=10 ** 2):

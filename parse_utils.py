@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import time
+
 from parse_rest.connection import register
 from parse_rest.datatypes import Object
 from parse_rest.user import User
-import parse_config as config
-import time
+
+from configs import parse_config
 
 
 class User(Object):
@@ -103,7 +105,7 @@ class Menu(object):
 
 
 def init_parse():
-    register(config.application_key, config.rest_api_key, master_key=config.master_key)
+    register(parse_config.application_key, parse_config.rest_api_key, master_key=parse_config.master_key)
 
 
 def place_bunch_orders():
